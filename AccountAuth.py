@@ -1,4 +1,6 @@
+import asyncio
 import os
+import time
 
 import httpx
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, Response
@@ -67,6 +69,33 @@ async def check_origin(request: Request):
         raise HTTPException(403, "Bad origin")
 
 
+# Refresh tokens rotate: the accounts API kills the old one the moment it issues a new one.
+# If a page fires several requests at once after the access token expired, they all carry the
+# same old refresh token, and without this only the first would succeed and the rest would
+# look "logged out". So concurrent refreshes with the same token share ONE upstream call, and
+# the result is remembered for a few seconds for requests that were already in flight.
+_REFRESH_REMEMBER_SECONDS = 15
+_refresh_results: dict[str, tuple[float, dict | None]] = {}
+_refresh_locks: dict[str, asyncio.Lock] = {}
+
+
+async def refresh_once(rt: str, request: Request) -> dict | None:
+    now = time.monotonic()
+    for k in [k for k, (t, _) in _refresh_results.items() if now - t > _REFRESH_REMEMBER_SECONDS]:
+        _refresh_results.pop(k, None)
+        _refresh_locks.pop(k, None)
+
+    lock = _refresh_locks.setdefault(rt, asyncio.Lock())
+    async with lock:
+        hit = _refresh_results.get(rt)
+        if hit:
+            return hit[1]
+        r = await upstream("POST", "/auth/refresh", request, json={"refresh_token": rt})
+        data = r.json() if r.status_code == 200 else None
+        _refresh_results[rt] = (time.monotonic(), data)
+        return data
+
+
 async def current_user(request: Request, response: Response) -> dict:
     """Dependency: returns the logged-in user or 401. Refreshes silently if needed."""
     at = request.cookies.get(AT_COOKIE)
@@ -77,9 +106,8 @@ async def current_user(request: Request, response: Response) -> dict:
 
     rt = request.cookies.get(RT_COOKIE)
     if rt:
-        r = await upstream("POST", "/auth/refresh", request, json={"refresh_token": rt})
-        if r.status_code == 200:
-            data = r.json()
+        data = await refresh_once(rt, request)
+        if data:
             set_session(response, data)
             me = await upstream("GET", "/auth/me", token=data["access_token"])
             if me.status_code == 200:
