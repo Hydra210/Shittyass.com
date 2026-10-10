@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const wordmark = <img className="brand-logo" src="/shittyass-wordmark.png" alt="ShittyAss.com" />;
+const wordmark = <img className="brand-logo" src="/shittyass-wordmark.png?v=2" alt="ShittyAss.com" />;
 
 export function Brand({ compact = false, linked = true }: { compact?: boolean; linked?: boolean }) {
   const className = `brand-lockup${compact ? ' brand-lockup--compact' : ''}`;
