@@ -28,3 +28,17 @@ export type UiPreferences = {
   reduceMotion: boolean;
   compactView: boolean;
 };
+
+export type StoryItem = {
+  id: string;
+  user: UserProfile;
+  seen?: boolean;
+};
+
+export type DirectMessagePreview = {
+  id: string;
+  with: UserProfile;
+  lastMessage: string;
+  sentAt: string;
+  unread?: boolean;
+};

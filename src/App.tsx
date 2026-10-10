@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { SiteShell } from './components/SiteShell';
 import { FeedPage } from './pages/FeedPage';
 import { ExplorePage } from './pages/ExplorePage';
+import { SearchPage } from './pages/SearchPage';
 import { FactionBuilderPage, FactionChannelPage, FactionDirectoryPage, FactionPage } from './pages/FactionPages';
 import { FactionSettingsPage, type SettingsSection } from './pages/FactionSettingsPage';
 import { ProfilePage } from './pages/ProfilePage';
@@ -56,7 +57,7 @@ export default function App() {
       <Route element={<SiteShell />}>
         <Route path="/" element={<FeedPage />} />
         <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/search" element={<ExplorePage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/factions" element={<FactionDirectoryPage />} />
         <Route path="/factions/create" element={<FactionBuilderPage />} />
         <Route path="/factions/:slug/settings/channels" element={<FactionSettingsPage section="channels" />} />

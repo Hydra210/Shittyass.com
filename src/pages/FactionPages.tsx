@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { ArrowRight, Hash, Plus, UsersRound } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import { EmptyZone } from '../components/EmptyZone';
 import { useSite } from '../state/SiteContext';
 import { useAuth } from '../state/AuthContext';
 
@@ -18,14 +19,7 @@ export function FactionDirectoryPage() {
       <label className="faction-search" htmlFor="faction-search"><UsersRound size={18} /><span className="sr-only">Search factions</span><input id="faction-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search factions" /></label>
       <Link to="/factions/create" className="button button--primary"><Plus size={16} />Create a faction</Link>
     </div>
-    <div className="faction-empty state-card">
-      <UsersRound size={22} />
-      <div>
-        <strong>{query.trim() ? 'Faction search is not connected yet.' : 'No factions are available yet.'}</strong>
-        <p>Public factions will appear here when the community directory is connected.</p>
-        <Link to="/factions/create" className="text-button">Create a faction <ArrowRight size={14} /></Link>
-      </div>
-    </div>
+    <EmptyZone />
   </Page>;
 }
 
@@ -57,7 +51,7 @@ export function FactionBuilderPage() {
           <div className="faction-choice-list">
             <label className={`faction-choice-card${discoverability === 'public' ? ' is-selected' : ''}`}>
               <input type="radio" name="discoverability" value="public" checked={discoverability === 'public'} onChange={() => setDiscoverability('public')} />
-              <span><strong>Public</strong><small>People can find this faction in Explore.</small></span>
+              <span><strong>Public</strong><small>People can find this faction in the Factions directory.</small></span>
             </label>
             <label className={`faction-choice-card${discoverability === 'private' ? ' is-selected' : ''}`}>
               <input type="radio" name="discoverability" value="private" checked={discoverability === 'private'} onChange={() => setDiscoverability('private')} />
@@ -84,7 +78,7 @@ export function FactionPage() {
       <div>
         <strong>Faction details are unavailable.</strong>
         <p>Faction content will appear here when the community service is connected.</p>
-        <div className="faction-empty-actions"><Link to={settings} className="text-button">Faction settings <ArrowRight size={14} /></Link><Link to="/factions" className="text-button">Explore factions <ArrowRight size={14} /></Link></div>
+        <div className="faction-empty-actions"><Link to={settings} className="text-button">Faction settings <ArrowRight size={14} /></Link><Link to="/factions" className="text-button">Browse factions <ArrowRight size={14} /></Link></div>
       </div>
     </div>
   </Page>;
@@ -99,7 +93,7 @@ export function FactionChannelPage() {
       <div>
         <strong>Channel content is unavailable.</strong>
         <p>Channel posts will appear here when faction services are connected.</p>
-        <div className="faction-empty-actions"><Link to={settings} className="text-button">Channel settings <ArrowRight size={14} /></Link><Link to="/factions" className="text-button">Explore factions <ArrowRight size={14} /></Link></div>
+        <div className="faction-empty-actions"><Link to={settings} className="text-button">Channel settings <ArrowRight size={14} /></Link><Link to="/factions" className="text-button">Browse factions <ArrowRight size={14} /></Link></div>
       </div>
     </div>
   </Page>;

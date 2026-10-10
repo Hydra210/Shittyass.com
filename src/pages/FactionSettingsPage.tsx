@@ -73,7 +73,7 @@ function GeneralSettings() {
       <fieldset className="faction-discoverability">
         <legend>Discoverability</legend>
         <div className="faction-choice-list">
-          <label className={`faction-choice-card${discoverability === 'public' ? ' is-selected' : ''}`}><input type="radio" name="faction-visibility" value="public" checked={discoverability === 'public'} onChange={() => setDiscoverability('public')} /><span><strong>Public</strong><small>People can find this faction in Explore.</small></span></label>
+          <label className={`faction-choice-card${discoverability === 'public' ? ' is-selected' : ''}`}><input type="radio" name="faction-visibility" value="public" checked={discoverability === 'public'} onChange={() => setDiscoverability('public')} /><span><strong>Public</strong><small>People can find this faction in the Factions directory.</small></span></label>
           <label className={`faction-choice-card${discoverability === 'private' ? ' is-selected' : ''}`}><input type="radio" name="faction-visibility" value="private" checked={discoverability === 'private'} onChange={() => setDiscoverability('private')} /><span><strong>Private</strong><small>Hidden from discovery; access is by invitation.</small></span></label>
         </div>
       </fieldset>

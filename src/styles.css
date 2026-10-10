@@ -729,3 +729,41 @@ html[data-reduce-motion="true"] *, html[data-reduce-motion="true"] *::before, ht
   .faction-admin-heading { align-items: flex-start; }
   .faction-config-row, .permission-list { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Empty sections: centered text */
+.empty-zone { display: flex; align-items: center; justify-content: center; min-height: 55vh; }
+.empty-zone-text { margin: 0; color: var(--text-dim); font-size: 15px; font-weight: 600; letter-spacing: .01em; text-align: center; }
+.page-heading--row { justify-content: space-between; }
+
+/* Top-of-page actions: search icon + square post button */
+.top-actions { display: flex; align-items: center; gap: 8px; }
+.page-search-link { width: 40px; height: 40px; border-color: var(--line); }
+.post-square-button { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 8px; color: #1c1c1c; background: var(--clay-hi); cursor: pointer; transition: background .14s ease, transform .14s ease; }
+.post-square-button:hover { background: #d29a71; }
+.post-square-button:active { transform: scale(.95); }
+@media (max-width: 690px) { .page-search-link { display: none; } .empty-zone { min-height: 50dvh; } }
+
+/* Right column only exists when there are stories or messages; without it the middle column takes the space */
+.app-layout--no-rail { grid-template-columns: 228px minmax(0, 1fr); }
+@media (max-width: 1210px) { .app-layout--no-rail { grid-template-columns: 215px minmax(0, 1fr); } }
+@media (max-width: 1020px) { .app-layout--no-rail { grid-template-columns: 205px minmax(0, 1fr); } }
+@media (max-width: 690px) { .app-layout--no-rail { display: block; } }
+.story-row { display: flex; gap: 14px; padding: 6px 6px 8px; margin: 0; overflow-x: auto; list-style: none; scrollbar-width: thin; }
+.story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 62px; color: var(--text-muted); font-size: 10px; text-align: center; }
+.story-item .avatar { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--clay-hi); }
+.story-item.is-seen .avatar { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--line-strong); }
+.story-item span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dm-list { display: flex; flex-direction: column; gap: 4px; padding: 0; margin: 0; list-style: none; }
+.dm-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 11px; color: var(--text); }
+.dm-item:hover { background: rgba(255,255,255,.05); }
+.dm-copy { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.dm-copy strong { font-size: 12px; }
+.dm-copy small { overflow: hidden; color: var(--text-muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.dm-unread { width: 8px; height: 8px; border-radius: 50%; background: var(--clay-hi); }
+.left-rail-legal { display: flex; flex-wrap: wrap; gap: 4px 9px; padding: 0 2px; }
+.left-rail-legal a { color: #787878; font-size: 9px; }
+.left-rail-legal a:hover { color: var(--clay-hi); }
+.left-rail-legal small { width: 100%; color: var(--text-dim); font-size: 8px; }
+
+.left-rail { overflow-y: auto; scrollbar-width: none; }
+.left-rail::-webkit-scrollbar { display: none; }
