@@ -8,6 +8,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from profiles import build_profile_router
+
 # ---------- config ----------
 
 ACCOUNTS_API_URL = os.environ["ACCOUNTS_API_URL"].rstrip("/")
@@ -96,13 +98,20 @@ async def refresh_once(rt: str, request: Request) -> dict | None:
         return data
 
 
+def active_only(user: dict) -> dict:
+    """The accounts API still returns held/terminated users from /auth/me, so block them here."""
+    if user.get("status") in ("held", "terminated"):
+        raise HTTPException(401, "This account is not active")
+    return user
+
+
 async def current_user(request: Request, response: Response) -> dict:
     """Dependency: returns the logged-in user or 401. Refreshes silently if needed."""
     at = request.cookies.get(AT_COOKIE)
     if at:
         r = await upstream("GET", "/auth/me", token=at)
         if r.status_code == 200:
-            return r.json()
+            return active_only(r.json())
 
     rt = request.cookies.get(RT_COOKIE)
     if rt:
@@ -111,7 +120,7 @@ async def current_user(request: Request, response: Response) -> dict:
             set_session(response, data)
             me = await upstream("GET", "/auth/me", token=data["access_token"])
             if me.status_code == 200:
-                return me.json()
+                return active_only(me.json())
 
     raise HTTPException(401, "Not logged in")
 
@@ -189,6 +198,7 @@ async def me(user: dict = Depends(current_user)):
 app = FastAPI(title="EXE Site", docs_url=None, redoc_url=None)
 
 app.include_router(auth)   # login/accounts (above)
+app.include_router(build_profile_router(current_user, check_origin))   # profiles, follows, avatars (profiles.py)
 
 
 @app.get("/health")

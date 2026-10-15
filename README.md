@@ -73,3 +73,16 @@ The interface includes Timeline, Explore/Search, faction/channel pages, public p
 Privacy and Terms are unreviewed launch drafts. Before launch, confirm operator identity, account-provider data handling and retention, jurisdiction, privacy contact, data-request/deletion process, and all other actual data flows with qualified counsel. Language and display preferences may be stored in browser local storage; authentication tokens are not.
 
 The supplied full crowned `ShittyAss.com` wordmark is the single image used in site/auth headers, the favicon and project logo metadata. No deployment, DNS or custom-domain setup is included.
+
+## Profiles (test storage)
+
+Profiles, avatars, banners, follows and people search are built (`profiles.py`, wired in from `AccountAuth.py`).
+
+- **Storage right now is local, for testing:** one SQLite file plus an uploads folder under `DATA_DIR` (default `./data`, ignored by git).
+  On Render's free tier that disk is wiped on every deploy and restart, so profiles reset there. Locally they persist.
+- **To go live later** swap the two small classes at the top of `profiles.py`: `ProfileStore` (SQL, move to Postgres) and `LocalStorage` (images, move to R2/S3).
+  Nothing else changes.
+- Profiles are keyed by the logged-in account id, which is never shown publicly. Public JSON only has a random profile id and the @username.
+- Optional env vars: `DATA_DIR`, `USERNAME_COOLDOWN_DAYS` (default 30).
+- There is no setup screen. The first time a signed-in account is seen, the server creates its profile automatically: the username comes from the account's display name (never the email) with a number added if it's taken or reserved, the display name starts out equal to the username, and the photo is a gray person icon. All of it is editable at `/settings/profile`.
+- `profiles.status` (`active` / `suspended` / `banned`) is already enforced: non-active profiles are hidden, can't be followed, and can't edit. The moderation tools that set it come later.
