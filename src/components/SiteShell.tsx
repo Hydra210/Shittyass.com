@@ -4,6 +4,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useSite } from '../state/SiteContext';
 import { useAuth } from '../state/AuthContext';
+import { useProfile } from '../state/ProfileContext';
 import { useRailContent } from '../state/useRailContent';
 import type { DirectMessagePreview, StoryItem } from '../types';
 import type { AccountUser } from '../auth/api';
@@ -24,6 +25,12 @@ const navItems = [
 
 function accountLabel(user: AccountUser) {
   return user.display_name || user.name || user.username || user.email || 'Signed in';
+}
+
+function AccountChip({ user }: { user: AccountUser }) {
+  const { profile } = useProfile();
+  if (profile) return <Link to={`/u/${profile.handle}`} className="account-chip"><Avatar user={profile} size="sm" /><span><strong>{profile.displayName}</strong><small>@{profile.handle}</small></span></Link>;
+  return <p>Signed in as {accountLabel(user)}</p>;
 }
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
@@ -72,7 +79,7 @@ function MobileNavigation({ onNavigate }: { onNavigate: () => void }) {
   return <nav className="mobile-menu-content" aria-label="Site navigation">
     <div className="mobile-menu-links"><NavLinks onNavigate={onNavigate} /><Link className="nav-link" to="/u/me" onClick={onNavigate}><span className="nav-icon-wrap"><CircleUserRound size={19} /></span><span>My profile</span></Link></div>
     <div className="mobile-menu-account">
-      {user ? <><p>Signed in as {accountLabel(user)}</p><LogoutButton className="button button--outline" onLoggedOut={onNavigate} /></> : status === 'loading' ? <p role="status">Checking account…</p> : <><Link className="button button--outline" to="/login" onClick={onNavigate}><LogIn size={15} />{t('action.signin')}</Link><Link className="button button--primary" to="/signup" onClick={onNavigate}>{t('action.signup')}</Link></>}
+      {user ? <><AccountChip user={user} /><LogoutButton className="button button--outline" onLoggedOut={onNavigate} /></> : status === 'loading' ? <p role="status">Checking account…</p> : <><Link className="button button--outline" to="/login" onClick={onNavigate}><LogIn size={15} />{t('action.signin')}</Link><Link className="button button--primary" to="/signup" onClick={onNavigate}>{t('action.signup')}</Link></>}
     </div>
     <nav className="mobile-menu-legal" aria-label="Legal and help"><Link to="/about" onClick={onNavigate}>About</Link><Link to="/help" onClick={onNavigate}>Help</Link><Link to="/privacy" onClick={onNavigate}>Privacy</Link><Link to="/terms" onClick={onNavigate}>Terms</Link><Link to="/accessibility" onClick={onNavigate}>Accessibility</Link><Link to="/safety" onClick={onNavigate}>Safety</Link></nav>
   </nav>;
@@ -98,7 +105,7 @@ export function SiteShell() {
         <nav className="primary-nav"><NavLinks /></nav>
         <div className="left-rail-bottom">
           <Link to="/u/me" className="profile-link"><CircleUserRound size={18} /><span>My profile</span></Link>
-          {user ? <section className="guest-account guest-account--signed-in" aria-label="Account access"><p>Signed in as {accountLabel(user)}</p><LogoutButton className="guest-signin" /></section> : status === 'loading' ? <section className="guest-account" aria-label="Account status"><p role="status">Checking account…</p></section> : <section className="guest-account" aria-label="Account access"><Link to="/signup" className="button button--primary button--wide">{t('action.signup')}</Link><Link to="/login" className="guest-signin">{t('action.signin')}</Link></section>}
+          {user ? <section className="guest-account guest-account--signed-in" aria-label="Account access"><AccountChip user={user} /><LogoutButton className="guest-signin" /></section> : status === 'loading' ? <section className="guest-account" aria-label="Account status"><p role="status">Checking account…</p></section> : <section className="guest-account" aria-label="Account access"><Link to="/signup" className="button button--primary button--wide">{t('action.signup')}</Link><Link to="/login" className="guest-signin">{t('action.signin')}</Link></section>}
           <nav className="left-rail-legal" aria-label="Information and legal links"><Link to="/about">About</Link><Link to="/help">Help</Link><Link to="/safety">Safety</Link><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/accessibility">Accessibility</Link><Link to="/cookies">Storage notice</Link><small>© 2026 ShittyAss.com</small></nav>
         </div>
       </aside>
