@@ -2,12 +2,21 @@ export type UserProfile = {
   id: string;
   handle: string;
   displayName: string;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
+  bannerUrl?: string | null;
   bio?: string;
   location?: string;
   website?: string;
+  pronouns?: string;
   createdAt?: string;
   verified?: boolean;
+  followerCount?: number;
+  followingCount?: number;
+  postCount?: number;
+  isSelf?: boolean;
+  isFollowing?: boolean;
+  status?: 'active' | 'suspended' | 'banned';
+  usernameChangeAvailableAt?: string | null;
 };
 
 export type Post = {

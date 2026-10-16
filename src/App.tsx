@@ -7,6 +7,8 @@ import { SearchPage } from './pages/SearchPage';
 import { FactionBuilderPage, FactionChannelPage, FactionDirectoryPage, FactionPage } from './pages/FactionPages';
 import { FactionSettingsPage, type SettingsSection } from './pages/FactionSettingsPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { EditProfilePage } from './pages/EditProfilePage';
+import { FollowListPage } from './pages/FollowListPage';
 import { PostDetailPage } from './pages/PostDetailPage';
 import { BookmarksPage, MessagesPage, NotificationsPage } from './pages/ActivityPages';
 import { SettingsPage } from './pages/SettingsPage';
@@ -31,7 +33,7 @@ function PageTitle() {
     const path = location.pathname;
     const titles: Record<string, string> = {
       '/': 'Timeline', '/explore': 'Explore', '/search': 'Search', '/factions': 'Factions', '/factions/create': 'Create a faction',
-      '/notifications': 'Notifications', '/messages': 'Messages', '/bookmarks': 'Bookmarks', '/settings': 'Settings',
+      '/notifications': 'Notifications', '/messages': 'Messages', '/bookmarks': 'Bookmarks', '/settings': 'Settings', '/settings/profile': 'Edit profile',
       '/login': 'Sign in', '/signup': 'Create account', '/forgot-password': 'Reset password', '/confirm-email': 'Confirm email',
       '/about': 'About ShittyAss.com', '/help': 'Help & support', '/privacy': 'Privacy notice', '/terms': 'Terms of service',
       '/accessibility': 'Accessibility', '/safety': 'Safety & community standards', '/cookies': 'Cookie and storage notice',
@@ -43,7 +45,7 @@ function PageTitle() {
         : path.endsWith('/settings') ? 'Faction settings'
           : path.includes('/channels/') ? 'Channel' : 'Faction';
     }
-    routeTitle ??= path.startsWith('/u/') ? 'Profile' : path.startsWith('/post/') ? 'Post' : 'Not found';
+    routeTitle ??= path.startsWith('/u/') ? (path.endsWith('/followers') ? 'Followers' : path.endsWith('/following') ? 'Following' : 'Profile') : path.startsWith('/post/') ? 'Post' : 'Not found';
     document.title = `${routeTitle} · ShittyAss.com`;
   }, [location.pathname]);
   return null;
@@ -76,8 +78,11 @@ export default function App() {
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/bookmarks" element={<BookmarksPage />} />
         <Route path="/u/:handle" element={<ProfilePage />} />
+        <Route path="/u/:handle/followers" element={<FollowListPage kind="followers" />} />
+        <Route path="/u/:handle/following" element={<FollowListPage kind="following" />} />
         <Route path="/post/:postId" element={<PostDetailPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/settings/profile" element={<EditProfilePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/help" element={<HelpPage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
